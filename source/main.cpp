@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <string>
 
 #include "Algoritms.h"
 
@@ -19,7 +20,7 @@ int main(){
 	{
 		system("cls");
 
-		cout << "1. Ручной ввод слова и образца\n2. Генерация слова из заданой длины\n3. Слова вида (B1B2...Bs)^k"
+		cout << "1. Ручной ввод слова и образца\n2. Генерация слова из заданной длины\n3. Слова вида (B1B2...Bs)^k"
 			 << "\n4. Эксперементы\n5. Выход\n" << endl;
 		cout << "Ввод: ";
 		cin >> answer;
@@ -29,15 +30,20 @@ int main(){
 		case 1:
 		{
 			system("cls");
+
+			cin.ignore();
 			cout << "Введите текст: ";
-			cin >> text;
+			getline(cin, text);
+
 			cout << "Введите образец: ";
 			cin >> paragraph;
+
 
 			naiveStringAlgoritm(text, paragraph);
 			kmpAlgoritm(text, paragraph);
 
-			cout << "\nГотово! Результаты времени можно найти в файлах 'outTime', а индексы можно найти в файлах 'outResult'" << endl;
+			cout << "\nГотово! Результаты времени можно найти в файлах 'outNaiveTime' и 'outKMPTime'"
+				 << "\n        Индексы можно найти в файлах 'outNaiveResult' и 'outKMPResult'" << endl;
 			cout << "\nНажмите на любую кнопку, чтобы вернуться назад..." << endl;
 
 			char ch = _getch();
@@ -47,9 +53,6 @@ int main(){
 		{
 			system("cls");
 
-			int alphabetSizeText = 0;
-			int alphabetSizeParagraph = 0;
-
 			int sizeWordText = 0;
 			int sizeWordParagraph = 0;
 
@@ -57,8 +60,6 @@ int main(){
 			string alphabetParagraph;
 
 			cout << "[PROGRAM] Ввод слова 'Text' [PROGRAM]" << endl;
-			cout << "Введите количество букв в алфавите: ";
-			cin >> alphabetSizeText;
 
 			cout << "Введите буквы алфавита: ";
 			cin >> alphabetText;
@@ -66,8 +67,7 @@ int main(){
 			cout << "Введите длину слова: ";
 			cin >> sizeWordText;
 
-			cout << endl << "[PROGRAM] Ввод слова 'Paragraph' [PROGRAM]" << endl << "Введите количество букв в алфавите: ";
-			cin >> alphabetSizeParagraph;
+			cout << endl << "[PROGRAM] Ввод слова 'Paragraph' [PROGRAM]" << endl;
 
 			cout << "Введите буквы алфавита: ";
 			cin >> alphabetParagraph;
@@ -85,15 +85,16 @@ int main(){
 
 			cout << endl << endl;
 
-			text = generateWord(alphabetSizeText, alphabetText, sizeWordText);
+			text = generateWord(alphabetText, sizeWordText);
 
 			cout <<"Сгенерировано слово 'Text': " << text << endl;
 
-			paragraph = generateWord(alphabetSizeParagraph, alphabetParagraph, sizeWordParagraph);
+			paragraph = generateWord(alphabetParagraph, sizeWordParagraph);
 			cout << "Сгенерировано слово 'Paragraph': " << paragraph << endl;
 
 			cout << endl << "[PROGRAM] Запуск 'Наивного' алгоритма [PROGRAM]";
 			naiveStringAlgoritm(text, paragraph);
+
 			cout << "\nГотово!" << endl << endl << "[PROGRAM] Запуск 'КМП' алгоритма [PROGRAM]" << "\nГотово!" << endl;
 			kmpAlgoritm(text, paragraph);
 
@@ -143,6 +144,7 @@ int main(){
 
 			cout << endl << "[PROGRAM] Запуск 'Наивного' алгоритма [PROGRAM]";
 			naiveStringAlgoritm(text, paragraph);
+
 			cout << "\nГотово!" << endl << endl << "[PROGRAM] Запуск 'КМП' алгоритма [PROGRAM]" << "\nГотово!" << endl;
 			kmpAlgoritm(text, paragraph);
 

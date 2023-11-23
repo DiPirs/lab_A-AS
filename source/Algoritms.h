@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include <string>
 #include <vector>
 #include <random>
 
@@ -12,13 +11,13 @@ using namespace std;
 vector <int> index;
 int* pi;
 
-string generateWord(const int& alphabetSize, const string& alphabet, const int& sizeWord) {
+string generateWord(const string& alphabet, const int& sizeWord) {
 
 	srand(time(nullptr));
 	random_device random;
 	mt19937 gen(random());
 
-	uniform_int_distribution <int> dis(0, alphabetSize - 1);
+	uniform_int_distribution <int> dis(0, alphabet.length() - 1);
 
 	string word;
 
@@ -44,28 +43,37 @@ string genRepeatWord(const string& word, const int& k) {
 }
 
 void naiveStringAlgoritm(const string &text, const string &paragraph) {
+	
+	ofstream outputFileInTime("outNaiveTimeAlgoritm.txt");
 
 	int n = text.length();
 	int m = paragraph.length();
 
 	auto startTime = chrono::high_resolution_clock::now();
 
-	for (int i = 0; i <= n - m; i++)
+	for (int i = 0, j = 0; i < n; ++i)
 	{
-		if (text.substr(i, m) == paragraph)
-			index.push_back(i);
-	}
+		j = 0;
 
+		while (i + j < n && j != m && text[i + j] == paragraph[j])
+		{
+			j++;
+		}
+
+		if (j == m)
+		{
+			index.push_back(i);
+		}
+	}
+	// aabaabaaaaaabaabaabaabbaaab
+	// aabaab
+	// 0 10 13 16
 	auto endTime = chrono::high_resolution_clock::now();
 
 	chrono::duration <double> totalTime = endTime - startTime;
-
-
-	ofstream outputFileInTime("outTimeFirstAlgoritm.txt");
-
 	outputFileInTime << "Время работы 'Наивного' алгоритма: " << totalTime.count() << " секунд.";
 
-	writtingResultToFile("outResultFirstAlgoritm.txt", index);
+	writtingResultToFile("outNaiveResultAlgoritm.txt", index);
 }
 
 void prefixFunction(const string& p) {
@@ -136,16 +144,20 @@ void kmpAlgoritm(const string& text, const string& paragraph) {
 
 	chrono::duration <double> totalTime = endTime - startTime;
 
-	ofstream outputFileInTime("outTimeSecondAlgoritm.txt");
+	ofstream outputFileInTime("outKMPTimeAlgoritm.txt");
 
 	outputFileInTime << "Время работы алгоритма 'Кнута-Морриса-Пратта': " << totalTime.count() << " секунд.";
 
-	writtingResultToFile("outResultSecondAlgoritm.txt", index);
+	writtingResultToFile("outKMPResultAlgoritm.txt", index);
 }
 
 void experiment4_1() {
-	ofstream outTimeExperement4_1;
-	outTimeExperement4_1.open("timeForExperiment4_1.txt", std::fstream::app);
+
+	ofstream outNaiveTimeExperement4_1;
+	ofstream outKMPTimeExperement4_1;
+	
+	outNaiveTimeExperement4_1.open("timeNaiveForExperiment4_1.txt", std::fstream::app);
+	outKMPTimeExperement4_1.open("timeKMPForExperiment4_1.txt", std::fstream::app);
 
 	string text_old = "ab", paragraph_old = "ab";
 
@@ -162,6 +174,16 @@ void experiment4_1() {
 		text_new = genRepeatWord(text_old, 1000 * k);
 		paragraph_new = genRepeatWord(paragraph_old, k);
 
+		// =========================================================
+		auto startTimeNaive = chrono::high_resolution_clock::now();
+
+		naiveStringAlgoritm(text_new, paragraph_new);
+
+		auto endTimeNaive = chrono::high_resolution_clock::now();
+
+		chrono::duration <double> totalTimeNaive = endTimeNaive - startTimeNaive;
+		outNaiveTimeExperement4_1 << k << " " << totalTimeNaive.count() << endl;
+		// =========================================================
 		auto startExperement = chrono::high_resolution_clock::now();
 
 		kmpAlgoritm(text_new, paragraph_new);
@@ -169,7 +191,8 @@ void experiment4_1() {
 		auto endExperement = chrono::high_resolution_clock::now();
 
 		chrono::duration <double> totalTimeExperement = endExperement - startExperement;
-		outTimeExperement4_1 << k << " " << totalTimeExperement.count() << endl;
+		outKMPTimeExperement4_1 << k << " " << totalTimeExperement.count() << endl;
+		// =========================================================
 	}
 }
 
@@ -180,14 +203,13 @@ void experiment4_2() {
 
 	outTimeNaiveAlgoritm.open("timeNaiveForExperiment4_2.txt", std::fstream::app);
 	outTimeKMPAlgoritm.open("timeKMPForExperiment4_2.txt", std::fstream::app);
-
-	int alphabetSizeText = 2;			
+	
 	int wordLenghtText = 1000001;		
 
 	string alphabetText = "ab";			
 	string paragraph, paragraph_init = "a";
 
-	string text = generateWord(alphabetSizeText, alphabetText, wordLenghtText);
+	string text = generateWord(alphabetText, wordLenghtText);
 
 	for (int m = 1; m <= 1000001; m += 10000)
 	{
